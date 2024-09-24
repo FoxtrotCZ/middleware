@@ -1,4 +1,4 @@
-from typing import TypedDict
+from dataclasses import dataclass
 
 # The values in this tuple are mostly used to calculate
 # ZFS ARC specific memory values. We are essentially
@@ -35,35 +35,18 @@ KSTAT_CACHE_FIELDS = (
 ALL_KSTAT_FIELDS = OTHER_KSTAT_FIELDS + KSTAT_CACHE_FIELDS
 _4GiB = 4294967296
 
-
-class ArcStats(TypedDict):
-    arc_min_size: int
-    arc_max_size: int
-    arc_size: int
-    arc_metadata_size: int
-    cache_hit_ratio: float  # TODO: wrong, need to remove
-
-    @classmethod
-    def create(
-        cls,
-        arc_min_size: int = 0,
-        arc_max_size: int = 0,
-        arc_size: int = 0,
-        arc_metadata_size: int = 0,
-        cache_hit_ratio: float = 0.0,
-    ):
-        return cls(
-            arc_min_size=arc_min_size,
-            arc_max_size=arc_max_size,
-            arc_size=arc_size,
-            arc_metadata_size=arc_metadata_size,
-            cache_hit_ratio=cache_hit_ratio
-        )
+@dataclass(slots=True, frozen=True, kw_only=True)
+class ArcStats:
+    arc_min_size: int = 0
+    arc_max_size: int = 0
+    arc_size: int = 0
+    arc_metadata_size: int = 0
+    cache_hit_ratio: float = 0.0  # TODO: wrong, need to remove
 
 
 def calculate_arc_stats_impl(arcstats: dict) -> ArcStats:
     if not arcstats:
-        return ArcStats.create()
+        return ArcStats()
 
     caches_size = sum([arcstats[i] for i in KSTAT_CACHE_FIELDS])
     c = 0x10000 * caches_size / 0x10000
@@ -78,7 +61,7 @@ def calculate_arc_stats_impl(arcstats: dict) -> ArcStats:
         ]) + caches_size
     )
 
-    return ArcStats.create(
+    return ArcStats(
         arc_min_size=arcstats['c_min'],
         arc_max_size=arcstats['c_max'],
         arc_size=arcstats['size'],
