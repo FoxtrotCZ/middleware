@@ -5,18 +5,18 @@ LEGACY_API_KEY_USERNAME = 'LEGACY_API_KEY'
 MAX_OTP_ATTEMPTS = 3
 
 
-class AuthMech(enum.Enum):
-    API_KEY_PLAIN = enum.auto()
-    PASSWORD_PLAIN = enum.auto()
-    TOKEN_PLAIN = enum.auto()
-    OTP_TOKEN = enum.auto()
+class AuthMech(enum.StrEnum):
+    API_KEY_PLAIN = 'API_KEY_PLAIN'
+    PASSWORD_PLAIN = 'PASSWORD_PLAIN'
+    TOKEN_PLAIN = 'TOKEN_PLAIN'
+    OTP_TOKEN = 'OTP_TOKEN'
 
 
-class AuthResp(enum.Enum):
-    SUCCESS = enum.auto()
-    AUTH_ERR = enum.auto()
-    EXPIRED = enum.auto()
-    OTP_REQUIRED = enum.auto()
+class AuthResp(enum.StrEnum):
+    SUCCESS = 'SUCCESS'
+    AUTH_ERR = 'AUTH_ERR'
+    EXPIRED = 'EXPIRED'
+    OTP_REQUIRED = 'OTP_REQUIRED'
 
 
 # NIST SP 800-63B provides documentation Authenticator Assurance Levels (AAL)

@@ -26,46 +26,46 @@ class AuthCommonOptions(BaseModel):
 
 
 class AuthApiKeyPlain(BaseModel):
-    mechanism: Literal[AuthMech.API_KEY_PLAIN.name]
+    mechanism: Literal[AuthMech.API_KEY_PLAIN]
     username: str
     api_key: Secret[str]
     login_options: AuthCommonOptions = Field(default=AuthCommonOptions())
 
 
 class AuthPasswordPlain(BaseModel):
-    mechanism: Literal[AuthMech.PASSWORD_PLAIN.name]
+    mechanism: Literal[AuthMech.PASSWORD_PLAIN]
     username: str
     password: Secret[str]
     login_options: AuthCommonOptions = Field(default=AuthCommonOptions())
 
 
 class AuthTokenPlain(BaseModel):
-    mechanism: Literal[AuthMech.TOKEN_PLAIN.name]
+    mechanism: Literal[AuthMech.TOKEN_PLAIN]
     token: Secret[str]
     login_options: AuthCommonOptions = Field(default=AuthCommonOptions())
 
 
 class AuthOTPToken(BaseModel):
-    mechanism: Literal[AuthMech.OTP_TOKEN.name]
+    mechanism: Literal[AuthMech.OTP_TOKEN]
     otp_token: Secret[str]
     login_options: AuthCommonOptions = Field(default=AuthCommonOptions())
 
 
 class AuthRespSuccess(BaseModel):
-    response_type: Literal[AuthResp.SUCCESS.name]
+    response_type: Literal[AuthResp.SUCCESS]
     user_info: AuthUserInfo | None
 
 
 class AuthRespAuthErr(BaseModel):
-    response_type: Literal[AuthResp.AUTH_ERR.name]
+    response_type: Literal[AuthResp.AUTH_ERR]
 
 
 class AuthRespExpired(BaseModel):
-    response_type: Literal[AuthResp.EXPIRED.name]
+    response_type: Literal[AuthResp.EXPIRED]
 
 
 class AuthRespOTPRequired(BaseModel):
-    response_type: Literal[AuthResp.OTP_REQUIRED.name]
+    response_type: Literal[AuthResp.OTP_REQUIRED]
     username: str
 
 
