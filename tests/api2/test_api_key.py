@@ -105,9 +105,9 @@ def test_legacy_api_key_upgrade():
 
         with client(auth=None) as c:
             resp = c.call('auth.login_ex', {
-               'mechanism': 'API_KEY_PLAIN',
-               'username': 'root',
-               'api_key': f'{key_id}-{LEGACY_ENTRY_KEY}'
+                'mechanism': 'API_KEY_PLAIN',
+                'username': 'root',
+                'api_key': f'{key_id}-{LEGACY_ENTRY_KEY}'
             })
             assert resp['response_type'] == 'SUCCESS'
 
@@ -119,9 +119,9 @@ def test_legacy_api_key_upgrade():
         # verify we still have access
         with client(auth=None) as c:
             resp = c.call('auth.login_ex', {
-               'mechanism': 'API_KEY_PLAIN',
-               'username': 'root',
-               'api_key': f'{key_id}-{LEGACY_ENTRY_KEY}'
+                'mechanism': 'API_KEY_PLAIN',
+                'username': 'root',
+                'api_key': f'{key_id}-{LEGACY_ENTRY_KEY}'
             })
             assert resp['response_type'] == 'SUCCESS'
 
@@ -135,9 +135,9 @@ def test_legacy_api_key_reject_nonroot(sharing_admin_user):
 
         with client(auth=None) as c:
             resp = c.call('auth.login_ex', {
-               'mechanism': 'API_KEY_PLAIN',
-               'username': sharing_admin_user.username,
-               'api_key': LEGACY_ENTRY_KEY
+                'mechanism': 'API_KEY_PLAIN',
+                'username': sharing_admin_user.username,
+                'api_key': LEGACY_ENTRY_KEY
             })
             assert resp['response_type'] == 'AUTH_ERR'
 
@@ -153,9 +153,9 @@ def test_api_key_expired(sharing_admin_user):
 
         with client(auth=None) as c:
             resp = c.call('auth.login_ex', {
-               'mechanism': 'API_KEY_PLAIN',
-               'username': sharing_admin_user.username,
-               'api_key': key
+                'mechanism': 'API_KEY_PLAIN',
+                'username': sharing_admin_user.username,
+                'api_key': key
             })
             assert resp['response_type'] == 'EXPIRED'
 
@@ -174,9 +174,9 @@ def test_key_revoked(sharing_admin_user):
 
         with client(auth=None) as c:
             resp = c.call('auth.login_ex', {
-               'mechanism': 'API_KEY_PLAIN',
-               'username': sharing_admin_user.username,
-               'api_key': key
+                'mechanism': 'API_KEY_PLAIN',
+                'username': sharing_admin_user.username,
+                'api_key': key
             })
             assert resp['response_type'] == 'AUTH_ERR'
 
@@ -185,9 +185,9 @@ def test_api_key_reset(sharing_admin_user):
     with api_key(sharing_admin_user.username) as key:
         with client(auth=None) as c:
             resp = c.call('auth.login_ex', {
-               'mechanism': 'API_KEY_PLAIN',
-               'username': sharing_admin_user.username,
-               'api_key': key
+                'mechanism': 'API_KEY_PLAIN',
+                'username': sharing_admin_user.username,
+                'api_key': key
             })
             assert resp['response_type'] == 'SUCCESS'
 
@@ -196,17 +196,17 @@ def test_api_key_reset(sharing_admin_user):
 
         with client(auth=None) as c:
             resp = c.call('auth.login_ex', {
-               'mechanism': 'API_KEY_PLAIN',
-               'username': sharing_admin_user.username,
-               'api_key': key
+                'mechanism': 'API_KEY_PLAIN',
+                'username': sharing_admin_user.username,
+                'api_key': key
             })
             assert resp['response_type'] == 'AUTH_ERR'
 
         with client(auth=None) as c:
             resp = c.call('auth.login_ex', {
-               'mechanism': 'API_KEY_PLAIN',
-               'username': sharing_admin_user.username,
-               'api_key': updated['key']
+                'mechanism': 'API_KEY_PLAIN',
+                'username': sharing_admin_user.username,
+                'api_key': updated['key']
             })
             assert resp['response_type'] == 'SUCCESS'
 

@@ -9,7 +9,7 @@ from middlewared.api.current import (
     ApiKeyEntry, ApiKeyCreateArgs, ApiKeyCreateResult, ApiKeyUpdateArgs, ApiKeyUpdateResult,
     ApiKeyDeleteArgs, ApiKeyDeleteResult, ApiKeyMyKeysArgs, ApiKeyMyKeysResult,
 )
-from middlewared.service import CRUDService, pass_app, private, ValidationError, ValidationErrors
+from middlewared.service import CRUDService, pass_app, private, ValidationErrors
 from middlewared.service_exception import CallError
 import middlewared.sqlalchemy as sa
 from middlewared.utils import filter_list
