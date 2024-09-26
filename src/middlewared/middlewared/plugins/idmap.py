@@ -1255,6 +1255,7 @@ class IdmapDomainService(CRUDService):
             'local': False,
             'id_type_both': id_type_both,
             'roles': [],
+            'api_keys': [],
             'two_factor_auth_configured': False,
             'immutable': True,
             'smb': True,

@@ -73,14 +73,14 @@ def test_authenticated_call():
                     "protocol": "REST",
                     "credentials": {
                         "credentials": "LOGIN_PASSWORD",
-                        "credentials_data": {"username": "root"},
+                        "credentials_data": {"username": "root", "login_at": ANY},
                     },
                 },
                 "event": "AUTHENTICATION",
                 "event_data": {
                     "credentials": {
                         "credentials": "LOGIN_PASSWORD",
-                        "credentials_data": {"username": "root"},
+                        "credentials_data": {"username": "root", "login_at": ANY},
                     },
                     "error": None,
                 },
@@ -96,7 +96,7 @@ def test_authenticated_call():
                     "protocol": "REST",
                     "credentials": {
                         "credentials": "LOGIN_PASSWORD",
-                        "credentials_data": {"username": "root"},
+                        "credentials_data": {"username": "root", "login_at": ANY},
                     },
                 },
                 "event": "METHOD_CALL",
