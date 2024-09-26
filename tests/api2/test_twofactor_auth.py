@@ -34,6 +34,11 @@ def user(data: dict):
         yield user_obj
 
 
+@pytest.fixture(scope='function')
+def clear_ratelimit():
+    call('rate.limit.cache_clear')
+
+
 def do_login(username, password, otp=None, expected=True):
     with client(auth=None) as c:
         resp = c.call('auth.login_ex', {
@@ -133,7 +138,7 @@ def test_login_with_otp_for_user_with_2fa():
             do_login(TEST_USERNAME_2, TEST_PASSWORD_2, get_2fa_totp_token(get_user_secret(user_obj['id'])))
 
 
-def test_user_2fa_secret_renewal():
+def test_user_2fa_secret_renewal(clear_ratelimit):
     with user({
         'username': TEST_USERNAME_2,
         'password': TEST_PASSWORD_2,
@@ -150,7 +155,7 @@ def test_user_2fa_secret_renewal():
             do_login(TEST_USERNAME_2, TEST_PASSWORD_2, get_2fa_totp_token(get_user_secret(user_obj['id'])))
 
 
-def test_restricted_user_2fa_secret_renewal():
+def test_restricted_user_2fa_secret_renewal(clear_ratelimit):
     with unprivileged_user(
         username=TEST_USERNAME,
         group_name='TEST_2FA_GROUP',
@@ -179,7 +184,7 @@ def test_restricted_user_2fa_secret_renewal():
                 do_login(acct.username, acct.password, get_2fa_totp_token(get_user_secret(user_obj['id'])))
 
 
-def test_multiple_users_login_with_otp():
+def test_multiple_users_login_with_otp(clear_ratelimit):
     with user({
         'username': TEST_USERNAME,
         'password': TEST_PASSWORD,
