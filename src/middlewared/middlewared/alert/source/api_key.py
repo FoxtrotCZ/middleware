@@ -19,7 +19,7 @@ class ApiKeyRevokedAlertClass(AlertClass, SimpleOneShotAlertClass):
     async def delete(self, alerts, key_name_set):
         remaining = []
         for alert in alerts:
-            if (alert_name := json.loads(alert.key)) not in key_name_set:
+            if json.loads(alert.key) not in key_name_set:
                 continue
 
             remaining.append(alert)
