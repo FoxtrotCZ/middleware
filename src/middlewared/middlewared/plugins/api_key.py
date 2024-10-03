@@ -9,7 +9,7 @@ from middlewared.api.current import (
     ApiKeyEntry, ApiKeyCreateArgs, ApiKeyCreateResult, ApiKeyUpdateArgs, ApiKeyUpdateResult,
     ApiKeyDeleteArgs, ApiKeyDeleteResult, ApiKeyMyKeysArgs, ApiKeyMyKeysResult,
 )
-from middlewared.service import CRUDService, pass_app, private, ValidationErrors
+from middlewared.service import CRUDService, pass_app, periodic, private, ValidationErrors
 from middlewared.service_exception import CallError
 import middlewared.sqlalchemy as sa
 from middlewared.utils import filter_list
@@ -246,6 +246,7 @@ class ApiKeyService(CRUDService):
         if reset:
             key = generate_string(string_size=64)
             new['keyhash'] = generate_pbkdf2_512(key)
+            new['revoked'] = False
 
         self.middleware.call_sync(
             'datastore.update',
@@ -258,6 +259,7 @@ class ApiKeyService(CRUDService):
             return new
 
         self.middleware.call_sync('etc.generate', 'pam_middleware')
+        self.middleware.call_sync('api_key.check_status')
         return dict(new, key=f"{new['id']}-{key}")
 
     @api_method(
@@ -284,6 +286,7 @@ class ApiKeyService(CRUDService):
         )
 
         await self.middleware.call('etc.generate', 'pam_middleware')
+        await self.check_status()
         return response
 
     @private
@@ -365,3 +368,15 @@ class ApiKeyService(CRUDService):
 
         username = app.authenticated_credentials.user['username']
         return await self.query([['username', '=', username]])
+
+    @private
+    @periodic(3600, run_on_start=False)
+    async def check_status(self) -> None:
+        keys = await self.query()
+        revoked_keys = set([key['name'] for key in filter_list(keys, [['revoked', '=', True]])])
+
+        for key_name in revoked_keys:
+            await self.middleware.call('alert.oneshot_create', 'ApiKeyRevoked', {'key_name': key_name})
+
+        # delete any fixed key alerts
+        await self.middleware.call('alert.oneshot_delete', 'ApiKeyRevoked', revoked_keys)
