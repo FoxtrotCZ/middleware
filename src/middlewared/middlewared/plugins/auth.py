@@ -8,6 +8,8 @@ import time
 from middlewared.api import api_method
 from middlewared.api.base.server.ws_handler.rpc import RpcWebSocketAppEvent
 from middlewared.api.current import (
+    AuthLegacyPasswordLoginArgs, AuthLegacyApiKeyLoginArgs, AuthLegacyTokenLoginArgs,
+    AuthLegacyTwoFactorArgs, AuthLegacyResult,
     AuthLoginExArgs, AuthLoginExResult,
     AuthMeArgs, AuthMeResult,
     AuthMechChoicesArgs, AuthMechChoicesResult,
@@ -381,8 +383,7 @@ class AuthService(Service):
         }
 
     @no_auth_required
-    @accepts(Str('username'), Str('password'))
-    @returns(Bool('two_factor_auth_enabled', description='Is `true` if 2FA is enabled'))
+    @api_method(AuthLegacyTwoFactorArgs, AuthLegacyResult)
     async def two_factor_auth(self, username, password):
         """
         Returns true if two-factor authorization is required for authorizing user's login.
@@ -394,8 +395,7 @@ class AuthService(Service):
 
     @cli_private
     @no_auth_required
-    @accepts(Str('username'), Password('password'), Password('otp_token', null=True, default=None))
-    @returns(Bool('successful_login'))
+    @api_method(AuthLegacyPasswordLoginArgs, AuthLegacyResult)
     @pass_app()
     async def login(self, app, username, password, otp_token):
         """
@@ -839,8 +839,7 @@ class AuthService(Service):
 
     @cli_private
     @no_auth_required
-    @accepts(Password('api_key'))
-    @returns(Bool('successful_login'))
+    @api_method(AuthLegacyApiKeyLoginArgs, AuthLegacyResult)
     @pass_app()
     async def login_with_api_key(self, app, api_key):
         """
@@ -877,8 +876,7 @@ class AuthService(Service):
 
     @cli_private
     @no_auth_required
-    @accepts(Password('token'))
-    @returns(Bool('successful_login'))
+    @api_method(AuthLegacyTokenLoginArgs, AuthLegacyResult)
     @pass_app()
     async def login_with_token(self, app, token_str):
         """

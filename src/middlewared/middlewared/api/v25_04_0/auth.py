@@ -16,6 +16,31 @@ class AuthUserInfo(UserGetUserObjResult.model_fields["result"].annotation):
     account_attributes: list[str]
 
 
+class AuthLegacyUsernamePassword(BaseModel):
+    username: str
+    password: Secret[str]
+
+
+class AuthLegacyTwoFactorArgs(AuthLegacyUsernamePassword):
+    pass
+
+
+class AuthLegacyPasswordLoginArgs(AuthLegacyUsernamePassword):
+    otp_token: Secret[str | None] = None
+
+
+class AuthLegacyApiKeyLoginArgs(BaseModel):
+    api_key: Secret[str]
+
+
+class AuthLegacyTokenLoginArgs(BaseModel):
+    token: Secret[str]
+
+
+class AuthLegacyResult(BaseModel):
+    result: bool
+
+
 @single_argument_result
 class AuthMeResult(AuthUserInfo):
     pass
