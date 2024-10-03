@@ -258,6 +258,7 @@ class ApiKeyService(CRUDService):
             return new
 
         self.middleware.call_sync('etc.generate', 'pam_middleware')
+        self.middleware.call_sync('api_key.check_keys')
         return dict(new, key=f"{new['id']}-{key}")
 
     @api_method(
@@ -284,6 +285,7 @@ class ApiKeyService(CRUDService):
         )
 
         await self.middleware.call('etc.generate', 'pam_middleware')
+        await self.check_status()
         return response
 
     @private
@@ -365,3 +367,14 @@ class ApiKeyService(CRUDService):
 
         username = app.authenticated_credentials.user['username']
         return await self.query([['username', '=', username]])
+
+    @private
+    async def check_status(self) -> None:
+        keys = await self.query()
+        revoked_keys = set([key['name'] for key in filter_list(keys, [['revoked', '=', True]])])
+
+        for key_name in revoked_keys:
+            await self.middleware.call('alert.oneshot_create', 'ApiKeyRevoked', {'key_name': key_name})
+
+        # delete any fixed key alerts
+        await self.middleware.call('alert.oneshot_delete', 'ApiKeyRevoked', revoked_keys)

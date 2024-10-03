@@ -8,16 +8,16 @@ class ApiKeyRevokedAlertClass(AlertClass, SimpleOneShotAlertClass):
     level = AlertLevel.WARNING
     title = "API Key Revoked"
     text = (
-        "The following API keys have been revoked and must either be renewed or deleted. "
+        "%(key_name)s: API key has been revoked and must either be renewed or deleted. "
         "Once the maintenance is complete, API client configuration must be updated to "
-        "use the renwed API key.\n%(keys)s"
+        "use the renwed API key."
     )
 
     async def create(self, args):
-        return Alert(DeprecatedServiceConfigurationAlertClass, args, key=args['config'])
+        return Alert(ApiKeyRevokedAlertClass, args, key=args['key_name'])
 
-    async def delete(self, alerts, query):
+    async def delete(self, alerts, key_name_set):
         return list(filter(
-            lambda alert: json.loads(alert.key) != str(query),
+            lambda alert: json.loads(alert.key) not in key_name_set,
             alerts
         ))
